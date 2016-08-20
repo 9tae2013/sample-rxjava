@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date [%thread] %-5level %class - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+
+	<!-- ALL<TRACE<DEBUG<INFO<WARN<ERROR<FATAL<OFF -->
+
+	<logger name="com.gable.test" level="DEBUG" />
+
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

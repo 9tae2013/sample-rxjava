@@ -1,0 +1,22 @@
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+apply plugin: 'java'
+
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
+
+dependencies {
+    compile 'io.reactivex:rxjava:1.1.2'
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.5'
+    compile 'ch.qos.logback:logback-classic:1.0.13'
+
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.mockito:mockito-all:1.10.19'
+}
+

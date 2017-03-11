@@ -1,17 +1,60 @@
 package com.gable.test;
 
+import org.javatuples.Pair;
 import rx.Observable;
+import rx.Subscriber;
+import rx.observers.Subscribers;
+import rx.schedulers.Schedulers;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class AppMain {
-    public static void main(String[] args) {
-        EmployeeRepository repository = new EmployeeRepository();
+    public static void main(String[] args) throws InterruptedException {
+        /*EmployeeService service = new EmployeeService();
+        service.getAllEmployee()
+                .subscribe(
+                        pair -> System.out.println(pair.getValue0().getName() + " " + pair.getValue1().size())
+                );*/
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Observable<String> obs1 = Observable.interval(3, TimeUnit.MILLISECONDS)
+                .take(10)
+                .map(l -> "Obs1_" + l);
+        Observable<String> obs2 = Observable.interval(1, TimeUnit.MILLISECONDS)
+                .take(20)
+                .map(l -> "Obs2_" + l);
 
 
+
+        Observable<String> concatObs = Observable.concat(obs1, obs2);
+        Observable<String> mergeObs = Observable.merge(obs1, obs2);
+
+        mergeObs.subscribe(System.out::println,
+                Throwable::printStackTrace,
+                () -> latch.countDown());
+        latch.await();
+    }
+}
+
+class EmployeeService {
+    private EmployeeRepository employeeRepository = new EmployeeRepository();
+    private AddressRepository addressRepository = new AddressRepository();
+
+    public Observable<Pair<Employee, List<Address>>> getAllEmployee() {
+        return employeeRepository.list()
+                .doOnNext(emp -> System.out.println("do on employee name " + emp.getName()))
+                .filter(employee -> employee.getId() == 2L)
+                .flatMap(
+                        employee -> addressRepository.getByEmployeeId(employee.getId())
+                                .toList()
+                                .map(addesses -> Pair.with(employee, addesses))
+                );
     }
 }
 
